@@ -9,7 +9,7 @@
     "lint:default": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
+    "format:fix": "eslint --fix .",
     "prepare": "husky"
   },
   "lint-staged": {
