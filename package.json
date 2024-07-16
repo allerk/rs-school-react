@@ -13,9 +13,10 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": [
-      "eslint --fix"
-    ]
+    "**/*.{js,ts,jsx,tsx}": [
+      "eslint"
+    ],
+    "**/*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
     "lint-staged": "^12.3.2",
