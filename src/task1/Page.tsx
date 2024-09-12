@@ -51,6 +51,8 @@ export class Page extends Component<unknown, IState> {
 
     let isNewSearchTerm: boolean = false;
 
+    searchTerm = searchTerm.trim();
+
     if (searchTerm && !this.state.searchValues.includes(searchTerm)) {
       localStorage.setItem(
         'searchValues',
