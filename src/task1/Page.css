@@ -1,0 +1,16 @@
+.small {
+  height: 40vh;
+  width: 100vw;
+  background-color: #c9c1c1;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.big {
+  height: 60vh;
+  width: 100vw;
+  /*align-items: center;*/
+  /*justify-content: center;*/
+  /*display: flex;*/
+}
