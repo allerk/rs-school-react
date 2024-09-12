@@ -1,5 +1,5 @@
-import { Page } from './task1/Page.tsx';
-import { ErrorBoundary } from './task1/ErrorBoundary.tsx';
+import { Page } from './components/Page.tsx';
+import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import { ReactNode } from 'react';
 
 function App(): ReactNode {

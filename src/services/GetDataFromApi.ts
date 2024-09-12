@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { IApiResponse } from '../interfaces/IApiResponse.ts';
 
-export const getDataFromApi = async (
+export const GetDataFromApi = async (
   apiUrl: string,
 ): Promise<IApiResponse[]> => {
   const config = {
@@ -21,4 +21,4 @@ export const getDataFromApi = async (
   }
 };
 
-export default getDataFromApi;
+export default GetDataFromApi;

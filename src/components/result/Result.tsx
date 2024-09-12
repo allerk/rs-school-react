@@ -1,5 +1,5 @@
 import { Component, ReactNode } from 'react';
-import { IApiResponse } from './interfaces/IApiResponse.ts';
+import { IApiResponse } from '../../interfaces/IApiResponse.ts';
 import './Result.css';
 
 interface IProps {

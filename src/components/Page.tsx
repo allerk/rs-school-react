@@ -1,10 +1,10 @@
 import { Component, FormEvent } from 'react';
 import '../index.css';
 import './Page.css';
-import { Search } from './Search.tsx';
-import { Result } from './Result.tsx';
-import getDataFromApi from './utils/getDataFromApi.ts';
-import { IApiResponse } from './interfaces/IApiResponse.ts';
+import { Search } from './search/Search.tsx';
+import { Result } from './result/Result.tsx';
+import GetDataFromApi from '../services/GetDataFromApi.ts';
+import { IApiResponse } from '../interfaces/IApiResponse.ts';
 
 interface IState {
   apiUrl: string;
@@ -27,6 +27,9 @@ export class Page extends Component<unknown, IState> {
       searchValues: JSON.parse(localStorage.getItem('searchValues')!),
       isLoading: false,
     };
+
+    // only if handleFormSubmit is not an arrow function
+    // this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
 
   async componentDidMount(): Promise<void> {
@@ -78,8 +81,46 @@ export class Page extends Component<unknown, IState> {
     }
   };
 
+  // if using function instead of arrow function this needs to be bind in a constructor to not lose this context
+  // async handleFormSubmit(
+  //   event: FormEvent<HTMLFormElement>,
+  //   searchTerm: string,
+  // ) {
+  //   event.preventDefault();
+  //
+  //   console.log(this);
+  //
+  //   let isNewSearchTerm: boolean = false;
+  //
+  //   searchTerm = searchTerm.trim();
+  //
+  //   if (searchTerm && !this.state.searchValues.includes(searchTerm)) {
+  //     localStorage.setItem(
+  //       'searchValues',
+  //       JSON.stringify([...this.state.searchValues, searchTerm]),
+  //     );
+  //     isNewSearchTerm = true;
+  //   }
+  //
+  //   this.setState({ isLoading: true });
+  //   const results: IApiResponse[] = await this.fetchResult(searchTerm);
+  //
+  //   if (isNewSearchTerm) {
+  //     this.setState({
+  //       results: results,
+  //       searchValues: [...this.state.searchValues, searchTerm],
+  //       isLoading: false,
+  //     });
+  //   } else {
+  //     this.setState({
+  //       results: results,
+  //       isLoading: false,
+  //     });
+  //   }
+  // }
+
   fetchResult = async (searchTerm: string): Promise<IApiResponse[]> => {
-    return await getDataFromApi(
+    return await GetDataFromApi(
       searchTerm.length > 0
         ? this.state.apiUrl + '?search=' + searchTerm
         : this.state.apiUrl + '?page=1',
