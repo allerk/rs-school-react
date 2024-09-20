@@ -73,7 +73,6 @@ export class Page extends Component<unknown, IState> {
     event.preventDefault();
     searchTerm = searchTerm.trim();
     const results = await this.fetchResults(searchTerm);
-    console.log(results);
     if (results.length > 0) {
       this.setState({
         results: results,
