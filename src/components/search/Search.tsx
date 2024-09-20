@@ -43,7 +43,7 @@ export class Search extends Component<IProps, IState> {
   };
 
   render(): ReactNode {
-    const { handleFormSubmit } = this.props;
+    const { handleFormSubmit, handleError } = this.props;
 
     return (
       <div className="md:container md:mx-auto flex justify-center h-full items-center">
@@ -70,6 +70,12 @@ export class Search extends Component<IProps, IState> {
               />
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
                 Search
+              </button>
+              <button
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mx-2 rounded-full"
+                onClick={handleError}
+              >
+                Call error
               </button>
             </div>
           </div>
