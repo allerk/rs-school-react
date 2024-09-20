@@ -2,48 +2,68 @@ import { Component, FormEvent } from 'react';
 import '../index.css';
 import './Page.css';
 import { Search } from './search/Search.tsx';
-import { Result } from './result/Result.tsx';
-import GetDataFromApi from '../services/GetDataFromApi.ts';
-import { IApiResponse } from '../interfaces/IApiResponse.ts';
+import { Results } from './results/Results.tsx';
+import { GetDataFromApi } from '../services/GetDataFromApi.ts';
+import {
+  GetSearchValuesFromLS,
+  SaveSearchTermToLS,
+} from '../services/Storage.ts';
+import { CharacterInfo } from '../interfaces/IApiResponse.ts';
+import { API_URL } from '../constants/general-constants.ts';
+import { Loader } from '../common/widgets/Loader.tsx';
 
 interface IState {
   apiUrl: string;
-  results: IApiResponse[];
+  results: CharacterInfo[];
   searchValues: string[];
   isLoading: boolean;
+  isError: boolean;
+  isStart: boolean;
+  noResults: boolean;
 }
 
 export class Page extends Component<unknown, IState> {
-  constructor(props: unknown) {
-    super(props);
-
-    if (!localStorage.getItem('searchValues')) {
-      localStorage.setItem('searchValues', JSON.stringify([]));
-    }
-
-    this.state = {
-      apiUrl: 'https://swapi.dev/api/people/',
-      results: [],
-      searchValues: JSON.parse(localStorage.getItem('searchValues')!),
-      isLoading: false,
-    };
-
-    // only if handleFormSubmit is not an arrow function
-    // this.handleFormSubmit = this.handleFormSubmit.bind(this);
-  }
+  state = {
+    apiUrl: API_URL,
+    results: [],
+    searchValues: GetSearchValuesFromLS(),
+    isLoading: false,
+    isError: false,
+    isStart: true,
+    noResults: false,
+  };
 
   async componentDidMount(): Promise<void> {
     this.setState({ isLoading: true });
     const results = [];
     for (const searchValue of this.state.searchValues) {
-      results.push(await this.fetchResult(searchValue));
+      results.push(await this.fetchResults(searchValue));
     }
 
     const uniqueResults = new Map(
       results.flat().map((item) => [item.name, item]),
     );
 
-    this.setState({ results: [...uniqueResults.values()], isLoading: false });
+    this.setState({
+      results: [...uniqueResults.values()],
+      isLoading: false,
+      isStart: results.length <= 0,
+    });
+  }
+
+  componentDidUpdate(
+    _prevProps: Readonly<unknown>,
+    prevState: Readonly<IState>,
+  ) {
+    if (this.state.searchValues !== prevState.searchValues) {
+      const newSearchValues = this.state.searchValues.filter(
+        (value) => !prevState.searchValues.includes(value),
+      );
+
+      if (newSearchValues.length > 0) {
+        SaveSearchTermToLS(JSON.stringify(this.state.searchValues));
+      }
+    }
   }
 
   handleFormSubmit = async (
@@ -51,98 +71,62 @@ export class Page extends Component<unknown, IState> {
     searchTerm: string,
   ): Promise<void> => {
     event.preventDefault();
-
-    let isNewSearchTerm: boolean = false;
-
     searchTerm = searchTerm.trim();
-
-    if (searchTerm && !this.state.searchValues.includes(searchTerm)) {
-      localStorage.setItem(
-        'searchValues',
-        JSON.stringify([...this.state.searchValues, searchTerm]),
-      );
-      isNewSearchTerm = true;
-    }
-
-    this.setState({ isLoading: true });
-    const results: IApiResponse[] = await this.fetchResult(searchTerm);
-
-    if (isNewSearchTerm) {
+    const results = await this.fetchResults(searchTerm);
+    console.log(results);
+    if (results.length > 0) {
       this.setState({
         results: results,
-        searchValues: [...this.state.searchValues, searchTerm],
+        searchValues:
+          !this.state.searchValues.includes(searchTerm) && searchTerm !== ''
+            ? [...this.state.searchValues, searchTerm]
+            : this.state.searchValues,
         isLoading: false,
+        noResults: false,
+        isStart: false,
       });
     } else {
-      this.setState({
-        results: results,
-        isLoading: false,
-      });
+      this.setState({ noResults: true, isStart: false });
     }
   };
 
-  // if using function instead of arrow function this needs to be bind in a constructor to not lose this context
-  // async handleFormSubmit(
-  //   event: FormEvent<HTMLFormElement>,
-  //   searchTerm: string,
-  // ) {
-  //   event.preventDefault();
-  //
-  //   console.log(this);
-  //
-  //   let isNewSearchTerm: boolean = false;
-  //
-  //   searchTerm = searchTerm.trim();
-  //
-  //   if (searchTerm && !this.state.searchValues.includes(searchTerm)) {
-  //     localStorage.setItem(
-  //       'searchValues',
-  //       JSON.stringify([...this.state.searchValues, searchTerm]),
-  //     );
-  //     isNewSearchTerm = true;
-  //   }
-  //
-  //   this.setState({ isLoading: true });
-  //   const results: IApiResponse[] = await this.fetchResult(searchTerm);
-  //
-  //   if (isNewSearchTerm) {
-  //     this.setState({
-  //       results: results,
-  //       searchValues: [...this.state.searchValues, searchTerm],
-  //       isLoading: false,
-  //     });
-  //   } else {
-  //     this.setState({
-  //       results: results,
-  //       isLoading: false,
-  //     });
-  //   }
-  // }
-
-  fetchResult = async (searchTerm: string): Promise<IApiResponse[]> => {
-    return await GetDataFromApi(
+  fetchResults = async (searchTerm: string): Promise<CharacterInfo[]> => {
+    const response = await GetDataFromApi(
       searchTerm.length > 0
         ? this.state.apiUrl + '?search=' + searchTerm
-        : this.state.apiUrl + '?page=1',
+        : this.state.apiUrl,
     );
+
+    return response.results;
+  };
+
+  handleError = (): void => {
+    this.setState({ isError: true });
   };
 
   render() {
+    if (this.state.isError) {
+      throw new Error('I crashed!');
+    }
     return (
-      <>
+      <div className="w-screen">
         <section className="small">
           <Search
             handleFormSubmit={this.handleFormSubmit}
             searchValues={this.state.searchValues}
+            handleError={this.handleError}
           ></Search>
         </section>
         <section className="big">
-          <Result
-            results={this.state.results}
-            isLoading={this.state.isLoading}
-          ></Result>
+          <Loader isLoading={this.state.isLoading}>
+            <Results
+              results={this.state.results}
+              isStart={this.state.isStart}
+              noResults={this.state.noResults}
+            ></Results>
+          </Loader>
         </section>
-      </>
+      </div>
     );
   }
 }

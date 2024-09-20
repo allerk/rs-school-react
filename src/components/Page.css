@@ -1,16 +1,12 @@
 .small {
-  height: 40vh;
-  width: 100vw;
+  height: 20vh;
   background-color: #c9c1c1;
   align-items: center;
   justify-content: center;
-  display: flex;
 }
 
 .big {
-  height: 60vh;
-  width: 100vw;
-  /*align-items: center;*/
-  /*justify-content: center;*/
-  /*display: flex;*/
+  height: 80vh;
+  align-items: flex-start;
+  justify-content: center;
 }
