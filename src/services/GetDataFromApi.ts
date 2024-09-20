@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { IApiResponse } from '../interfaces/IApiResponse.ts';
+import { PaginatedCharacters } from '../interfaces/IApiResponse.ts';
 
 export const GetDataFromApi = async (
   apiUrl: string,
-): Promise<IApiResponse[]> => {
+): Promise<PaginatedCharacters> => {
   const config = {
     method: 'get',
     url: apiUrl,
@@ -14,7 +14,7 @@ export const GetDataFromApi = async (
 
   try {
     const response = await axios(config);
-    return response.data.results as IApiResponse[];
+    return response.data as PaginatedCharacters;
   } catch (error) {
     console.error('Error fetching data:', error);
     throw error;
