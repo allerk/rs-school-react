@@ -4,7 +4,6 @@ import './Search.css';
 interface IState {
   searchTerm: string;
   filteredValues: string[];
-  error: boolean;
 }
 
 interface IProps {
@@ -13,6 +12,7 @@ interface IProps {
     searchTerm: string,
   ) => void;
   searchValues: string[];
+  handleError: () => void;
 }
 
 export class Search extends Component<IProps, IState> {
@@ -22,7 +22,6 @@ export class Search extends Component<IProps, IState> {
     this.state = {
       searchTerm: '',
       filteredValues: [],
-      error: false,
     };
   }
 
@@ -39,58 +38,54 @@ export class Search extends Component<IProps, IState> {
   handleItemClick = (value: string): void => {
     this.setState({
       searchTerm: value,
-      filteredValues: [], // Hide the dropdown after selecting
+      filteredValues: [],
     });
   };
 
-  callError = (): void => {
-    this.setState({ error: true });
-  };
-
   render(): ReactNode {
-    if (this.state.error) {
-      throw new Error('I crashed!');
-    }
+    const { handleFormSubmit } = this.props;
+
     return (
-      <>
-        <div className="search-container">
-          <button onClick={this.callError}>Call error</button>
-          <form
-            onSubmit={(e) =>
-              this.props.handleFormSubmit(e, this.state.searchTerm)
+      <div className="md:container md:mx-auto flex justify-center h-full items-center">
+        <form
+          className="relative"
+          onSubmit={(e) => handleFormSubmit(e, this.state.searchTerm)}
+        >
+          <div
+            className={
+              this.state.searchTerm && this.state.filteredValues.length > 0
+                ? 'search-box-results'
+                : 'search-box'
             }
           >
-            <div className="search-box">
-              <div className="row">
-                <input
-                  type="text"
-                  id="input-box"
-                  placeholder="Search anything..."
-                  autoComplete="off"
-                  onChange={this.handleInputChange}
-                  value={this.state.searchTerm}
-                />
-                <button>Search</button>
-              </div>
-              <div className="result-box">
-                {this.state.searchTerm &&
-                  this.state.filteredValues.length > 0 && (
-                    <ul>
-                      {this.state.filteredValues.map((item) => (
-                        <li
-                          key={item}
-                          onClick={() => this.handleItemClick(item)}
-                        >
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-              </div>
+            <div className="row">
+              <input
+                // className="w-full ml-2 mr-2 py-2 px-4 rounded-md max-370:ml-0 max-370:mr-0 max-370:mt-2 max-370:mb-2"
+                className="w-full rounded-md"
+                type="text"
+                placeholder="Search anything..."
+                autoComplete="off"
+                onChange={this.handleInputChange}
+                value={this.state.searchTerm}
+              />
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                Search
+              </button>
             </div>
-          </form>
-        </div>
-      </>
+          </div>
+          <div className="result-box drop-shadow">
+            {this.state.searchTerm && this.state.filteredValues.length > 0 && (
+              <ul>
+                {this.state.filteredValues.map((item) => (
+                  <li key={item} onClick={() => this.handleItemClick(item)}>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </form>
+      </div>
     );
   }
 }
