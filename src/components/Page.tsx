@@ -108,7 +108,7 @@ export class Page extends Component<unknown, IState> {
       throw new Error('I crashed!');
     }
     return (
-      <div className="w-screen">
+      <div className="w-full">
         <section className="small">
           <Search
             handleFormSubmit={this.handleFormSubmit}
