@@ -1,6 +1,7 @@
 import { Component, ReactNode } from 'react';
 import { CharacterInfo } from '../../interfaces/IApiResponse.ts';
 import './Results.css';
+import { CardsList } from '../../common/card/CardsList.tsx';
 
 interface IProps {
   results: CharacterInfo[];
@@ -16,20 +17,9 @@ export class Results extends Component<IProps> {
     }
 
     return (
-      <div>
+      <div className="md:container md:mx-auto pt-10">
         {!noResults ? (
-          <ul>
-            {results.map((item) => (
-              <li key={item.name}>
-                The character - <span className="bold-text">{item.name}</span>{' '}
-                is <span className="red-text">{item.height}</span> height and it
-                weighs around <span className="red-text">{item.mass}</span> kgs.{' '}
-                <span className="bold-text">{item.name}</span> identifies as a{' '}
-                <span className="red-text">{item.gender}</span> person and has a{' '}
-                <span className="red-text">{item.eye_color}</span> eyes.
-              </li>
-            ))}
-          </ul>
+          <CardsList results={results}></CardsList>
         ) : (
           <p>Nothing was found. Try again!</p>
         )}
