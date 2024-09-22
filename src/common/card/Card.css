@@ -1,0 +1,25 @@
+.card {
+  background-color: #57ace5;
+  border-radius: 5px 5px 5px 5px;
+  width: 270px;
+  margin: 10px;
+}
+
+.card h2 {
+  padding: 10px;
+}
+
+.card p {
+  padding: 10px;
+}
+
+.card-image {
+  background-color: red;
+  height: 270px;
+  margin-bottom: 15px;
+  /*background-size: cover;*/
+}
+
+/*.image-placeholder {*/
+/*    background-image: url("../../images/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg");*/
+/*}*/

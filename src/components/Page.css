@@ -1,0 +1,11 @@
+.small {
+  height: 20vh;
+  background-color: #c9c1c1;
+  align-items: center;
+  justify-content: center;
+}
+
+.big {
+  align-items: flex-start;
+  justify-content: center;
+}
